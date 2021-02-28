@@ -22,16 +22,20 @@ shinyServer(
     fit = eventReactive(input$run, {
       
       # Read in expression dataset
-      dataset = read.table(file = input$expr$datapath, sep = "", row.names = 1)
+      dataset = as.data.frame(data.table::fread(input$expr$datapath))
+      row.names(dataset) <- dataset[,1]
+      dataset <- dataset[,-1]
 
       # Read in group information
-      group = read.table(file = input$grouping$datapath, sep = "", row.names = 1)
+      group = readLines(input$grouping$datapath)
+      if (length(group) > nrow(dataset)) {
+        group <- group[-1]
+      }
       
       # Remove rows with zero variance
       dataset = dataset[apply(dataset, 1, var) > 0,]
       
       X = dataset
-      group = as.numeric(unlist(group))
       fit = try(DiffNet.FDR(X=X, group = group, alpha = input$alpha, test.type = input$test.type, parallel = input$parallel, nCpus = input$numCore))
       
       

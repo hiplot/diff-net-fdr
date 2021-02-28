@@ -1,6 +1,6 @@
-require("igraph")
-require("MASS")
-require("Matrix")
+pacman::p_load("igraph")
+pacman::p_load("MASS")
+pacman::p_load("Matrix")
 
 generate_data <- 
   function(p = 100, n = 100, tau = 0.3,  model = "ER", umin = 0.5, umax = 1){
